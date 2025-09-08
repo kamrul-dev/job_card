@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job Card Report - Versioned</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 15px;
+      background: #f5f7fa;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    .no-print-controls {
+      margin: 32px auto 24px auto;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 28px 36px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px;
+      align-items: center;
+      border: 1px solid #e3e8ee;
+    }
+    .no-print-controls label {
+      font-weight: 600;
+      margin-right: 10px;
+      color: #005fa3;
+      font-size: 16px;
+    }
+    .no-print-controls select,
+    .no-print-controls input[type="file"] {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid #cfd8dc;
+      background: #f9fafb;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      box-shadow: 0 1px 2px rgba(0,120,212,0.04);
+    }
+    .no-print-controls select:focus,
+    .no-print-controls input[type="file"]:focus {
+      border-color: #0078d4;
+      outline: none;
+    }
+    .no-print-controls button {
+      background: linear-gradient(90deg,#0078d4 0%,#005fa3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,120,212,0.10);
+      transition: background 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .no-print-controls button:hover {
+      background: linear-gradient(90deg,#005fa3 0%,#0078d4 100%);
+    }
+    #reports {
+      max-width: 900px;
+      margin: 0 auto 40px auto;
+    }
+    .report-box {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.10);
+      padding: 36px 40px 32px 40px;
+      margin-bottom: 48px;
+      border: 1px solid #e3e8ee;
+      position: relative;
+    }
+    .header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 22px;
+      color: #1a237e;
+      letter-spacing: 0.5px;
+    }
+    .header strong {
+      font-size: 2.4em;
+      letter-spacing: 1px;
+      color: #0078d4;
+      font-family: 'Segoe UI Semibold', Arial, sans-serif;
+      text-shadow: 0 2px 8px rgba(0,120,212,0.08);
+    }
+    .header-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 22px;
+      background: #f7fafd;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,120,212,0.06);
+      border: 1px solid #e3e8ee;
+    }
+    .header-table th, .header-table td {
+      padding: 6px 8px;
+      font-size: 14px;
+    }
+    .middle-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+      border: 1px solid #e3e8ee;
+    }
+    .middle-table th {
+      background: #e3f2fd;
+      color: #0078d4;
+      font-weight: 600;
+      padding: 8px 6px;
+      border-bottom: 2px solid #b3e5fc;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+    .middle-table td {
+      padding: 7px 6px;
+      font-size: 13px;
+    }
+    .middle-table tr:hover td {
+      background: #f5faff;
+    }
+    .middle-table tr:last-child td {
+      border-bottom: none;
+    }
+    .summary {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      background: #f7fafd;
+      border-radius: 10px;
+      padding: 12px 8px;
+      font-size: 14px;
+      box-shadow: 0 1px 6px rgba(0,120,212,0.06);
+      border: 1px solid #e3e8ee;
+    }
+    .summary div {
+      font-weight: 600;
+      color: #222;
+      background: #e3f2fd;
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,120,212,0.03);
+      border: 1px solid #b3e5fc;
+    }
+    .footer {
+      margin-top: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 16px;
+      color: #444;
+    }
+    .footer div {
+      text-align: center;
+      font-weight: 600;
+      padding-top: 14px;
+      letter-spacing: 0.5px;
+    }
+    .legend {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 0.2px;
+      background: #f7fafd;
+      border-radius: 8px;
+      padding: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,120,212,0.03);
+      border: 1px solid #e3e8ee;
+    }
+    @media print {
+      @page { size: A4 portrait; margin: 8mm; }
+      body { background: #fff; zoom: 80%; }
+      .no-print { display: none !important; }
+      #reports { margin: 0 auto !important; max-width: 800px !important; width: 100% !important; }
+      .report-box { padding: 6px 2px 2px 2px; box-shadow: none; border: 1px solid #bbb; margin: 0 auto !important; border-radius: 0; width: 100% !important; }
+      .header-table, .middle-table, .summary, .legend { box-shadow: none; border-radius: 0; border: 1px solid #bbb; }
+      .summary { font-size: 12px; padding: 4px 2px; gap: 6px; grid-template-columns: repeat(4, 1fr); }
+      .middle-table th, .middle-table td { font-size: 12px; padding: 4px 2px; }
+      .header-table th, .header-table td { font-size: 12px; padding: 4px 2px; }
+      .footer { font-size: 13px; margin-top: 18px; }
+      .legend { font-size: 12px; padding: 6px 0; margin-top: 10px; }
+    }
+    @media (max-width: 1000px) {
+      .report-box, #reports, .no-print-controls { max-width: 100vw; padding: 12px; }
+      .summary { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print no-print-controls" style="position:relative;">
+    <div style="position:absolute;top:18px;right:36px;text-align:right;z-index:2;">
+      <span style="font-size:1.8em;font-weight:700;color:#3261e2;letter-spacing:1px;">JOB CARD</span>
+    </div>
+    <label for="version">Select Report Version: </label>
+    <select id="version">
+      <option value="actual">Actual Data</option>
+      <option value="ot2">OT capped at 2h/day</option>
+      <option value="ot4">OT capped at 4h/day</option>
+      <option value="noWeekend">No Working Weekends</option>
+    </select>
+    <input id="fileInput" type="file" accept=".xlsx,.xls" onchange="loadExcel(event)">
+    <button class="no-print" onclick="rebuildReport()">Rebuild Report</button>
+    <button class="no-print" onclick="window.print()">🖨️ Print Report</button>
+  </div>
+  <div id="reports"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    let cachedRows = null;
+    let cachedEmp = null;
+    let cachedDateRange = null;
+
+    function loadExcel(event) {
+      const version = document.getElementById("version").value;
+      if (!version) {
+        alert("Please select a version first!");
+        event.target.value = "";
+        return;
+      }
+
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        let rows = XLSX.utils.sheet_to_json(sheet, { defval: "", header: 1, range: 2 });
+
+        const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0] || [];
+        rows = rows.map(r => {
+          const obj = {};
+          headers.forEach((h, i) => obj[h] = r[i] ?? "");
+          return obj;
+        });
+
+        if (!rows.length) return;
+
+        cachedRows = rows;
+
+        const first = rows[0] || {};
+        cachedEmp = {
+          id: first["Employee Id"] || first["Emp Id"] || first["EmployeeID"] || "",
+          name: first["Employee Name"] || first["Name"] || "",
+          designation: first["Designation"] || "",
+          department: first["Department"] || first["Section"] || "",
+          joiningDate: first["JoiningDate"] || first["Joining Date"] || ""
+        };
+
+        const startDate = rows[0].Date || "";
+        const endDate = rows[rows.length - 1].Date || "";
+        cachedDateRange = `${startDate} - ${endDate}`;
+
+        rebuildReport(); // auto-build after upload
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function rebuildReport() {
+      if (!cachedRows) {
+        alert("Please upload a file first.");
+        return;
+      }
+      const version = document.getElementById("version").value;
+      if (!version) {
+        alert("Please select a version first!");
+        return;
+      }
+
+      const reportsDiv = document.getElementById("reports");
+      reportsDiv.innerHTML = "";
+
+      switch (version) {
+        case "ot2": generateReport(cachedRows, "OT capped at 2h/day", cachedEmp, cachedDateRange, 120); break;
+        case "ot4": generateReport(cachedRows, "OT capped at 4h/day", cachedEmp, cachedDateRange, 240); break;
+        case "noWeekend": generateReport(cachedRows, "Exclude Weekends", cachedEmp, cachedDateRange, null, true); break;
+        case "actual": generateReport(cachedRows, "Actual Data (No Manipulation)", cachedEmp, cachedDateRange); break;
+      }
+    }
+
+    function generateReport(rows, title, emp, dateRange, otCap = null, excludeWeekend = false) {
+      let present=0, absent=0, leave=0, weekend=0, holiday=0, totalNight=0;
+      let earlyExit=0, totalTiffin=0, lateMin=0, totalOT=0;
+      let eduty=0, edutyMin=0;
+      let cLeave=0, sLeave=0, eLeave=0;
+      let displayedRows = 0;
+
+      let tbodyHtml = "";
+
+      rows.forEach(r => {
+        const isWeekend = (r.Status === "Weekend" || r.Status === "Weekend, Present" || r.Status === "Weekend, 0.5 day Present");
+
+        let OTmin = toMinutes(r["Overtime"]) || 0;
+        if (otCap !== null && OTmin > otCap) OTmin = otCap;
+
+        // For excludeWeekend version, still show weekends but don't count them as working days
+        if (excludeWeekend && isWeekend) {
+          // weekend++;
+          tbodyHtml += `
+            <tr>
+              <td>${r.Date || ''}</td>
+              <td>${r["Shift(s)"] || ''}</td>
+              <td>${time(r["Check-in"]) || ''}</td>
+              <td>${time(r["Check-out"]) || ''}</td>
+              <td>${r["Late Entry"] || ''}</td>
+              <td>${r["Early Exit"] || ''}</td>
+              <td>${r.Status || ''}</td>
+              <td>--:--</td>
+              <td>${r["Shift Allowance"] || ''}</td>
+              <td>${r["Total Shift Allowance"] || ''}</td>
+              <td>${r.Remarks || ''}</td>
+            </tr>`;
+          // return; // skip counting OT, present, leave, etc.
+        }else{
+          tbodyHtml += `
+          <tr>
+            <td>${r.Date || ''}</td>
+            <td>${r["Shift(s)"] || ''}</td>
+            <td>${time(r["Check-in"]) || ''}</td>
+            <td>${time(r["Check-out"]) || ''}</td>
+            <td>${r["Late Entry"] || ''}</td>
+            <td>${r["Early Exit"] || ''}</td>
+            <td>${r.Status || ''}</td>
+            <td>${toHHMM(OTmin)} </td>
+            <td>${r["Shift Allowance"] || ''}</td>
+            <td>${r["Total Shift Allowance"] || ''}</td>
+            <td>${r.Remarks || ''}</td>
+          </tr>`;
+        }
+
+        
+        displayedRows++;
+
+        // Count summaries
+        switch (r.Status) {
+          case "L": leave++; break;
+          case "H": holiday++; break;
+          case "Absent": absent++; break;
+          case "Present": present++; break;
+          case "Weekend": weekend++; break;
+          case "C/L": case "CL": cLeave++; leave++; break;
+          case "E/L": case "EL": eLeave++; leave++; break;
+          case "S/L": case "SL": sLeave++; leave++; break;
+          case "0.5 day Present, 0.5 day Absent": absent++; break;
+        }
+
+        switch (r["Shift Allowance"]) {
+          case "N": case "Night": totalNight++; break;
+        }
+
+        if (r["Total Shift Allowance"] && r["Total Shift Allowance"].toString().trim() !== "") {
+          const val = parseFloat(r["Total Shift Allowance"]);
+          if (!Number.isNaN(val)) totalTiffin += val;
+        }
+
+        lateMin   += toMinutes(r["Late Entry"])  || 0;
+        totalOT   += OTmin;
+        earlyExit += toMinutes(r["Early Exit"])  || 0;
+      });
+            // <strong>Job Card Report — ${title}</strong>
+
+      const box = `
+        <div class="report-box">
+          <div class="header">
+            <strong style="font-size: 2em;">Good and Fast Packaging Co. Ltd.</strong><br>
+            Plot-1425, Laskarchala, Haturiachal, Kaliakair, Gazipur, Bangladesh <br>
+          </div>
+
+          <table class="header-table">
+            <tr>
+              <th style="text-align: left; padding: 4px;">Date Range: ${dateRange}</th>
+              <th style="text-align: right; padding: 4px;">Employee Id: ${emp.id || ""}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left; padding: 4px;">Name: ${emp.name || ""}</th>
+              <th style="text-align: right; padding: 4px;">Designation: ${emp.designation || ""}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left; padding: 4px;">Section/Line: ${emp.department || ""}</th>
+              <th style="text-align: right; padding: 4px;">Joining Date: ${emp.joiningDate || ""}</th>
+            </tr>
+          </table>
+
+          <table class="middle-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Shift</th>
+                <th>In Time</th>
+                <th>Out Time</th>
+                <th>Late</th>
+                <th>E.Exit</th>
+                <th>Status</th>
+                <th>OT</th>
+                <th>N.Status</th>
+                <th>T.Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>${tbodyHtml}</tbody>
+          </table>
+
+          <div class="summary">
+            <div>Present: ${present}</div>
+            <div>Holiday: ${holiday}</div>
+            <div>Early Exit: ${toHHMM(earlyExit)}</div>
+            <div>Total Night: ${totalNight}</div>
+
+            <div>Leave: ${leave}</div>
+            <div>C/L: ${cLeave}</div>
+            <div>Late Min: ${toHHMM(lateMin)}</div>
+            <div>Night Shift: ${totalNight}</div>
+
+            <div>Absent: ${absent}</div>
+            <div>S/L: ${sLeave}</div>
+            <div>Total OT: ${toHHMM(totalOT)}</div>
+            <div>Total Tiffin: ${Number.isFinite(totalTiffin) ? totalTiffin : 0}</div>
+
+            <div>Weekend: ${weekend}</div>
+            <div>E/L: ${eLeave}</div>
+            <div>E.Duty Min: ${edutyMin}</div>
+            <div>E.Duty: ${eduty}</div>
+
+            <div>Total Day: ${displayedRows}</div>
+          </div>
+
+          <div class="footer">
+            <div>______________________<br>Signature of Employee</div>
+            <div>______________________<br>Authorized Signature</div>
+          </div>
+          <div class="legend">
+            __________________________________________________________________________________________________<br>
+            Status Legend: P-Present, A-Absent, W-Weekly Holiday, H-Holiday, CL-Casual Leave, SL-Sick Leave, EL-Earn Leave
+          </div>
+        </div>`;
+      document.getElementById("reports").innerHTML = box;
+    }
+
+    function time(val) {
+      if (!val) return "--:--";
+      if (typeof val === "string" && val.includes(" ")) return val.split(" ")[1] || "--:--";
+      if (typeof val === "number") {
+        const d = XLSX.SSF.parse_date_code(val);
+        if (d) return String(d.H).padStart(2, "0") + ":" + String(d.M).padStart(2, "0");
+      }
+      try {
+        const d = new Date(val);
+        const h = d.getHours(), m = d.getMinutes();
+        if (Number.isNaN(h) || Number.isNaN(m)) return "--:--";
+        return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+      } catch { return "--:--"; }
+    }
+
+    function toMinutes(str) {
+      if (!str) return 0;
+      const parts = String(str).split(":");
+      if (parts.length !== 2) return 0;
+      const h = parseInt(parts[0], 10) || 0;
+      const m = parseInt(parts[1], 10) || 0;
+      return h * 60 + m;
+    }
+
+    function toHHMM(mins) {
+      const total = Math.max(0, mins|0);
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0");
+    }
+  </script>
+</body>
+</html>
